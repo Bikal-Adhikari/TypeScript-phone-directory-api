@@ -85,4 +85,30 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
+// Update an existing contact
+router.put("/:id", async (req: Request, res: Response) => {
+  try {
+    const contact: IContact | null = await Contact.findById(req.params.id);
+    if (!contact) return res.status(404).send("Contact not found");
+    contact.name = req.body.name || contact.name;
+    contact.phone = req.body.phone || contact.phone;
+    await contact.save();
+
+    const resObj: apiResponse = {
+      status: true,
+      message: "Contact Updated!",
+      data: contact,
+    };
+    res.json(resObj);
+  } catch (err) {
+    const errorObj = {
+      status: false,
+      message: "Server Error",
+      data: "",
+    };
+
+    res.status(500).send(errorObj);
+  }
+});
+
 export default router;
