@@ -14,7 +14,7 @@ router.get("/", async (req: Request, res: Response) => {
       data: contacts,
     };
 
-    res.json(resObj);
+    return res.status(201).json(resObj);
   } catch (err) {
     const errorObj: apiResponse = {
       status: false,
@@ -25,3 +25,64 @@ router.get("/", async (req: Request, res: Response) => {
     res.status(500).send(errorObj);
   }
 });
+
+// Get a single contact by ID
+router.get("/:id", async (req: Request, res: Response) => {
+  try {
+    const contact: IContact | null = await Contact.findById(req.params.id);
+    if (!contact) {
+      const errorObj = {
+        status: false,
+        message: "Contact not found",
+        data: "",
+      };
+
+      return res.status(404).send(errorObj);
+    }
+
+    const resObj: apiResponse = {
+      status: true,
+      message: "Contact Found",
+      data: contact,
+    };
+
+    res.json(resObj);
+  } catch (err) {
+    const errorObj = {
+      status: false,
+      message: "Server Error",
+      data: "",
+    };
+
+    res.status(500).send(errorObj);
+  }
+});
+
+// Add a new contact
+router.post("/", async (req: Request, res: Response) => {
+  try {
+    const newContact: IContact = new Contact({
+      name: req.body.name,
+      phone: req.body.phone,
+    });
+    const contact: IContact = await newContact.save();
+
+    const resObj: apiResponse = {
+      status: true,
+      message: "Created new contact",
+      data: contact,
+    };
+
+    res.status(201).json(resObj);
+  } catch (err) {
+    const errorObj: apiResponse = {
+      status: false,
+      message: "Server Error",
+      data: "",
+    };
+
+    res.status(500).send(errorObj);
+  }
+});
+
+export default router;
