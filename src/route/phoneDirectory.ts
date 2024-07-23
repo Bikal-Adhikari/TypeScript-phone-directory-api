@@ -111,4 +111,37 @@ router.put("/:id", async (req: Request, res: Response) => {
   }
 });
 
+// Delete a contact
+router.delete("/:id", async (req: Request, res: Response) => {
+  try {
+    const contact: IContact | null = await Contact.findById(req.params.id);
+    if (!contact) {
+      const errorObj = {
+        status: false,
+        message: "Contact not found",
+        data: "",
+      };
+
+      return res.status(404).send(errorObj);
+    }
+    await contact.deleteOne();
+
+    const resObj: apiResponse = {
+      status: true,
+      message: "Contact Deleted",
+      data: "",
+    };
+
+    return res.status(200).send(resObj);
+  } catch (err) {
+    const errorObj = {
+      status: false,
+      message: "Server Error",
+      data: "",
+    };
+
+    return res.status(500).send(errorObj);
+  }
+});
+
 export default router;
