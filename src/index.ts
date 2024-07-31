@@ -1,12 +1,15 @@
 import express, { Request, Response } from "express";
 import connectDB from "./config/database";
 import phoneDirectoryRoutes from "./route/phoneDirectory";
+import cors from "cors";
 
 const app = express();
 const port = 3000;
 
 // Connect to MongoDB
 connectDB();
+
+app.use(cors());
 
 app.use(express.json());
 app.use("/api/phone-directory", phoneDirectoryRoutes);
